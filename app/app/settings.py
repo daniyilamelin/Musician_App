@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-&l@(i3*=y(16s*^w0i*snxoz9tc#4t6()2^^i#-$xhk3=zyzta
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['musician-app-b4sc.onrender.com', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
