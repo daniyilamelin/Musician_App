@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-&l@(i3*=y(16s*^w0i*snxoz9tc#4t6()2^^i#-$xhk3=zyzta
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -122,6 +121,7 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'main.User'
 
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -132,6 +132,7 @@ CACHES = {
     }
 }
 
+
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
@@ -139,3 +140,4 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
