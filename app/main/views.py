@@ -13,7 +13,7 @@ import string
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from app.common.mixins import CacheMixin
+
 from .forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 import json
 from django_redis import get_redis_connection
@@ -125,7 +125,7 @@ class UserRegistrationView(CreateView):
             auth.login(self.request, user)
             return HttpResponseRedirect(self.success_url)
 
-class ProfileForm(LoginRequiredMixin, CacheMixin,  UpdateView):
+class ProfileForm(LoginRequiredMixin, UpdateView):
     template_name = "main/profile.html"
     form_class = UserProfileForm
     success_url = reverse_lazy("users:profile")
