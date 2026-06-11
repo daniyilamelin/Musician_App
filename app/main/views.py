@@ -13,11 +13,12 @@ import string
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from common.mixins import CacheMixin
+from app.common.mixins import CacheMixin
 from .forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 import json
 from django_redis import get_redis_connection
-
+from dotenv import load_dotenv
+load_dotenv()
 
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client["Musician"]
