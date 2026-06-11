@@ -1,0 +1,215 @@
+{% extends "main/index.html" %}
+{% load static %}
+
+{% block css %}
+<style>
+  .profile-page { padding: 0; }
+
+  .profile-card {
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 36px;
+    max-width: 520px;
+    border: 1px solid rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+  }
+
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(31,31,31,0.85);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .profile-username {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+  }
+
+  .profile-joined {
+    font-size: 13px;
+    opacity: 0.45;
+    margin: 0 0 28px 0;
+  }
+
+  .profile-divider {
+    height: 1px;
+    background: rgba(31,31,31,0.1);
+    margin: 24px 0;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .status-label {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.5;
+  }
+
+  .status-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .status-badge.verified {
+    background: rgba(126,200,126,0.25);
+    color: #2d7a2d;
+  }
+
+  .status-badge.unverified {
+    background: rgba(232,99,90,0.15);
+    color: #c0392b;
+  }
+
+  .verify-box {
+    background: rgba(255,255,255,0.4);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1.5px dashed rgba(31,31,31,0.15);
+  }
+
+  .verify-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+
+  .verify-box p {
+    font-size: 13px;
+    opacity: 0.55;
+    margin: 0 0 16px 0;
+    max-width: 100%;
+    line-height: 1.5;
+  }
+
+  .token-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(31,31,31,0.06);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+
+  .token-code {
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    flex: 1;
+  }
+
+  .token-hint {
+    font-size: 12px;
+    opacity: 0.4;
+    margin-top: 6px;
+  }
+
+  .profile-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .action-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s ease;
+  }
+
+  .action-btn.dark {
+    background: rgba(31,31,31,0.9);
+    color: #fff;
+  }
+
+  .action-btn.dark:hover {
+    background: #000;
+    transform: translateY(-1px);
+  }
+
+  .action-btn.light {
+    background: rgba(31,31,31,0.08);
+    color: #1f1f1f;
+  }
+
+  .action-btn.light:hover {
+    background: rgba(31,31,31,0.15);
+  }
+</style>
+{% endblock css %}
+
+{% block content %}
+            <h1>{{ name }}</h1>
+<div class="profile-page">
+  <div class="profile-card">
+
+    <div class="profile-avatar">{{ request.user.username|first|upper }}</div>
+    <div class="profile-username">{{ request.user.username }}</div>
+    <div class="profile-joined">Акаунт створено: {{ request.user.date_joined|date:"d.m.Y" }}</div>
+
+    <div class="status-row">
+      <span class="status-label">Статус акаунту</span>
+      {% if request.user.telegram_id %}
+        <span class="status-badge verified">✅ Верифікований</span>
+      {% else %}
+        <span class="status-badge unverified">⏳ Не верифікований</span>
+      {% endif %}
+    </div>
+
+    <div class="status-row">
+      <span class="status-label">Telegram</span>
+      {% if request.user.telegram_id %}
+        <span class="status-badge verified">Прив'язано</span>
+      {% else %}
+        <span class="status-badge unverified">Не прив'язано</span>
+      {% endif %}
+    </div>
+
+    <div class="profile-divider"></div>
+
+    {% if not request.user.telegram_id %}
+    <div class="verify-box">
+      <h3>🔗 Прив'яжи Telegram</h3>
+      <p>Введи цей код в нашому боті командою <strong>/verify КОД</strong> щоб прив'язати акаунт</p>
+      <div class="token-display">
+        <span class="token-code">{{ token }}</span>
+      </div>
+      <div class="token-hint">⏱ Токен дійсний 10 хвилин</div>
+    </div>
+    {% endif %}
+
+<div class="profile-actions" style="margin-top: 24px; display: flex; flex-direction: column; gap: 10px;">
+  <a href="{% url 'playlist' %}" class="action-btn light" style="text-align: center;">🎵 Мій плейлист</a>
+  <a href="{% url 'reccomendation' %}" class="action-btn light" style="text-align: center;">🎯 Рекомендації</a>
+  <a href="{% url 'logout' %}" class="action-btn dark" style="text-align: center;">← Вийти з акаунту</a>
+</div>
+
+
+  </div>
+</div>
+{% endblock content %}

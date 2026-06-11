@@ -1,0 +1,256 @@
+{% extends "main/index.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+  main { flex: 1; display: flex; flex-direction: column; }
+
+  .mood-page {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  /* ── ліва панель ── */
+  .mood-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.25);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    padding: 24px 20px;
+    position: sticky;
+    top: 40px;
+  }
+
+  .mood-sidebar h2 {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin: 0 0 16px 0;
+  }
+
+  .mood-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mood-btn {
+    padding: 10px 16px;
+    border: 1.5px solid rgba(31,31,31,0.12);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.3);
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f1f1f;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .mood-btn:hover {
+    background: rgba(31,31,31,0.08);
+    transform: translateX(3px);
+  }
+
+  .mood-btn.active {
+    background: rgba(31,31,31,0.9);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* ── права панель ── */
+  .mood-content {
+    flex: 1;
+  }
+
+  .mood-content h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    line-height: 1.1;
+  }
+
+  .mood-content .subtitle {
+    font-size: 15px;
+    opacity: 0.55;
+    margin: 0 0 32px 0;
+  }
+
+  .results-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 14px;
+  }
+
+  .songs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .song-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 14px;
+    padding: 14px 18px;
+    backdrop-filter: blur(6px);
+    transition: 0.2s ease;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .song-card:hover {
+    transform: translateX(4px);
+    background: rgba(255,255,255,0.5);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .song-num {
+    font-size: 11px;
+    font-weight: 800;
+    opacity: 0.2;
+    width: 18px;
+    flex-shrink: 0;
+  }
+
+  .song-info { flex: 1; }
+
+  .song-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
+    text-transform: capitalize;
+  }
+
+  .song-artist {
+    font-size: 12px;
+    opacity: 0.5;
+    text-transform: capitalize;
+  }
+
+  .song-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(31,31,31,0.08);
+    font-weight: 500;
+  }
+
+  .tag.mood-tag {
+    background: rgba(31,31,31,0.85);
+    color: #fff;
+  }
+
+  .energy-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .energy-dot.low    { background: #7ec87e; }
+  .energy-dot.medium { background: #f5c842; }
+  .energy-dot.high   { background: #e8635a; }
+
+  .empty-state {
+    font-size: 15px;
+    opacity: 0.45;
+    padding: 32px 0;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .mood-page { flex-direction: column; }
+    .mood-sidebar { width: 100%; position: static; }
+    .mood-buttons { flex-direction: row; flex-wrap: wrap; }
+    .mood-btn { width: auto; }
+  }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="mood-page">
+
+  <!-- ліва панель: кнопки настрою -->
+  <div class="mood-sidebar">
+    <h2>Настрій</h2>
+    <div class="mood-buttons">
+      <a href="?mood=happy"       class="mood-btn {% if request.GET.mood == 'happy' %}active{% endif %}">😊 Щасливий</a>
+      <a href="?mood=sad"         class="mood-btn {% if request.GET.mood == 'sad' %}active{% endif %}">😢 Сумний</a>
+      <a href="?mood=energetic"   class="mood-btn {% if request.GET.mood == 'energetic' %}active{% endif %}">⚡ Енергійний</a>
+      <a href="?mood=calm"        class="mood-btn {% if request.GET.mood == 'calm' %}active{% endif %}">🌿 Спокійний</a>
+      <a href="?mood=melancholic" class="mood-btn {% if request.GET.mood == 'melancholic' %}active{% endif %}">🌧 Меланхолійний</a>
+      <a href="?mood=nostalgic"   class="mood-btn {% if request.GET.mood == 'nostalgic' %}active{% endif %}">📻 Ностальгійний</a>
+      <a href="?mood=focused"     class="mood-btn {% if request.GET.mood == 'focused' %}active{% endif %}">🎯 Зосереджений</a>
+      <a href="?mood=romantic"    class="mood-btn {% if request.GET.mood == 'romantic' %}active{% endif %}">💛 Романтичний</a>
+      <a href="?mood=angry"       class="mood-btn {% if request.GET.mood == 'angry' %}active{% endif %}">🔥 Злий</a>
+      <a href="?mood=chill"       class="mood-btn {% if request.GET.mood == 'chill' %}active{% endif %}">😌 Розслаблений</a>
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 16px;">
+    <a href="{% url 'index' %}" class="my-button" style="margin-top: 0; font-size: 13px; padding: 9px 18px;">← Головна</a>
+    <a href="{% url 'playlist' %}" class="my-button" style="margin-top: 0; font-size: 13px; padding: 9px 18px;">🎯 Плейлист</a>
+  </div>
+  </div>
+
+  <!-- права панель: результати -->
+  <div class="mood-content">
+
+    {% if songs %}
+      <div class="results-label">{{ songs|length }} треків для тебе</div>
+      <div class="songs-list">
+        {% for song in songs %}
+        <div class="song-card" style="animation-delay: {{ forloop.counter0 }}00ms">
+          <span class="song-num">{{ forloop.counter }}</span>
+          <div class="song-info">
+            <div class="song-title">{{ song.song }}</div>
+            <div class="song-artist">{{ song.artist }}</div>
+          </div>
+          <div class="song-meta">
+            {% if song.mood %}<span class="tag mood-tag">{{ song.mood }}</span>{% endif %}
+            {% if song.genre %}<span class="tag">{{ song.genre }}</span>{% endif %}
+          </div>
+          {% if song.energy %}
+          <div class="energy-dot {% if song.energy == 'Low' %}low{% elif song.energy == 'Medium' %}medium{% else %}high{% endif %}"></div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+    {% elif request.GET.mood %}
+      <div class="empty-state">
+        Пісень для цього настрою поки немає — додай більше треків через бота 🎵
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        Обери настрій зліва і ми підберемо музику
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock content %}

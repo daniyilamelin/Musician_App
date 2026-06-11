@@ -1,0 +1,291 @@
+{% extends "main/index.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .playlist-wrapper {
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 32px;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
+  .playlist-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .playlist-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .playlist-count {
+    font-size: 13px;
+    opacity: 0.4;
+    font-weight: 600;
+  }
+
+  /* ── графіки ── */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .chart-card {
+    background: rgba(255,255,255,0.35);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
+  .chart-card h3 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin: 0 0 16px 0;
+  }
+
+  .chart-container {
+    position: relative;
+    height: 180px;
+  }
+
+  /* ── сітка пісень ── */
+  .playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .song-card {
+    background: rgba(255,255,255,0.35);
+    border-radius: 14px;
+    padding: 16px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.5);
+    transition: 0.2s ease;
+  }
+
+  .song-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.55);
+  }
+
+  .song-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 3px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .song-artist {
+    font-size: 12px;
+    opacity: 0.5;
+    text-transform: capitalize;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .song-mood {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: rgba(31,31,31,0.08);
+    border-radius: 999px;
+    display: inline-block;
+    font-weight: 500;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 0;
+    opacity: 0.4;
+    font-size: 15px;
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 900px) {
+    .playlist-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .playlist-grid { grid-template-columns: 1fr; }
+    .playlist-wrapper { padding: 20px; }
+  }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="playlist-wrapper">
+
+  <div class="playlist-header">
+    <h1>{{ name }}</h1>
+    {% if collection %}
+      <span class="playlist-count">{{ collection|length }} треків</span>
+    {% endif %}
+  </div>
+
+  <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+    <a href="{% url 'index' %}" class="my-button" style="margin-top: 0; font-size: 13px; padding: 9px 18px;">← Головна</a>
+    <a href="{% url 'reccomendation' %}" class="my-button" style="margin-top: 0; font-size: 13px; padding: 9px 18px;">🎯 Вибрати настрій</a>
+      <button onclick="toggleCharts()" class="my-button" id="chartsBtn"
+  style="margin-top: 0; font-size: 13px; padding: 9px 18px;">
+  📊 Показати статистику
+</button>
+
+  </div>
+
+
+<div id="chartsBlock" style="display: none; margin-top: 20px;">
+ {% if collection %}
+  <div class="charts-row">
+
+    <!-- Настрої -->
+    <div class="chart-card">
+      <h3>Розподіл настроїв</h3>
+      <div class="chart-container">
+        <canvas id="moodChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Енергетика -->
+    <div class="chart-card">
+      <h3>Енергетика плейлиста</h3>
+      <div class="chart-container">
+        <canvas id="energyChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
+</div>
+
+  <div class="playlist-grid">
+    {% if collection %}
+      {% for item in collection %}
+      <div class="song-card">
+        <div class="song-title">{{ item.song }}</div>
+        <div class="song-artist">{{ item.artist }}</div>
+        {% if item.mood %}
+          <span class="song-mood">{{ item.mood }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        Плейлист порожній — додай пісні через бота 🎵
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% if collection %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // дані з Django
+  const moodData = {{ mood_stats|safe }};
+  const energyData = {{ energy_stats|safe }};
+
+  // кольори
+  const moodColors = [
+    "#ffb347", "#87ceeb", "#ff6b6b", "#98d8a3",
+    "#c3b1e1", "#f4a7b9", "#ffd700", "#a0c4ff",
+    "#ffadad", "#caffbf"
+  ];
+
+  const energyColors = {
+    "low":    "#7ec87e",
+    "medium": "#f5c842",
+    "high":   "#e8635a",
+  };
+
+  // діаграма настроїв (doughnut)
+  new Chart(document.getElementById("moodChart"), {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(moodData),
+      datasets: [{
+        data: Object.values(moodData),
+        backgroundColor: moodColors.slice(0, Object.keys(moodData).length),
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "right",
+          labels: { font: { family: "Inter", size: 11 }, boxWidth: 12 }
+        }
+      }
+    }
+  });
+
+  // діаграма енергетики (bar)
+  const energyLabels = Object.keys(energyData);
+  new Chart(document.getElementById("energyChart"), {
+    type: "bar",
+    data: {
+      labels: energyLabels,
+      datasets: [{
+        data: Object.values(energyData),
+        backgroundColor: energyLabels.map(k => energyColors[k.toLowerCase()] || "#ccc"),
+        borderRadius: 8,
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, font: { family: "Inter", size: 11 } },
+          grid: { color: "rgba(0,0,0,0.05)" }
+        },
+        x: {
+          ticks: { font: { family: "Inter", size: 11 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+    function toggleCharts() {
+    const block = document.getElementById("chartsBlock");
+    const btn = document.getElementById("chartsBtn");
+    if (block.style.display === "none") {
+      block.style.display = "grid";
+      btn.textContent = "📊 Сховати статистику";
+    } else {
+      block.style.display = "none";
+      btn.textContent = "📊 Показати статистику";
+    }
+  }
+</script>
+{% endif %}
+
+{% endblock content %}
