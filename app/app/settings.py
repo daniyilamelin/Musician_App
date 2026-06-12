@@ -123,8 +123,17 @@ AUTH_USER_MODEL = 'main.User'
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "REDIS_CLIENT_KWARGS": {
+                "protocol": 2,
+            },
+            "CONNECTION_POOL_KWARGS": {
+                "ssl_cert_reqs": None,
+            }
+        }
     }
 }
 
