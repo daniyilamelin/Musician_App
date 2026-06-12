@@ -129,9 +129,6 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "REDIS_CLIENT_KWARGS": {
                 "protocol": 2,
-            },
-            "CONNECTION_POOL_KWARGS": {
-                "ssl_cert_reqs": None,
             }
         }
     }
