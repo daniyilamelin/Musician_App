@@ -121,13 +121,15 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'main.User'
 
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.getenv("REDIS_URL"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "REDIS_CLIENT_KWARGS": {
+                "protocol": 2,  # RESP2 замість RESP3
+            }
         }
     }
 }
