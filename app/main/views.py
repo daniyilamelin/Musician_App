@@ -20,7 +20,13 @@ from django_redis import get_redis_connection
 from dotenv import load_dotenv
 load_dotenv()
 
-client = MongoClient(os.getenv("MONGO_URI"))
+client = MongoClient(
+    os.getenv("MONGO_URI"),
+    serverSelectionTimeoutMS=5000,
+    connectTimeoutMS=5000,
+    socketTimeoutMS=5000,
+    maxPoolSize=1,
+)
 db = client["Musician"]
 ai_client = genai.Client(api_key= os.getenv("GEMINI_AI_KEY"))
 
