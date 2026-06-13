@@ -1,5 +1,5 @@
-.idea/
+../.idea/
 __pycache__/
 *.pyc
 venv/
-.env
+telegram_bot/.env
