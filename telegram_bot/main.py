@@ -31,5 +31,13 @@ async def main():
     return app
 
 if __name__ == '__main__':
-    app = asyncio.run(main())
-    web.run_app(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+    async def start():
+        app = await main()
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+        await site.start()
+        await asyncio.Event().wait()
+    
+    asyncio.run(start())
+
