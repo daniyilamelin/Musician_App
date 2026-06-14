@@ -70,18 +70,20 @@ def playlist(request):
     return render(request, 'main/playlist.html', context)
 
 def reccomendation(request):
+    lists_songs = []
     if request.user.is_anonymous:
         lists_songs = []
     else:
         collection = db[os.getenv("MONGO_COLLECTION")]
         mod = request.GET.get('mood')
-        lists_songs = []
-
-        songs = collection.find({
-            "user_id": request.user.telegram_id,
-            "mood": {"$regex": mod, "$options": "i"}})
-        for song in songs:
-            lists_songs.append(song)
+        if not mod:
+            lists_songs = []
+        else:
+            songs = collection.find({
+                "user_id": request.user.telegram_id,
+                "mood": {"$regex": mod, "$options": "i"}})
+            for song in songs:
+                lists_songs.append(song)
 
     context = {
         "title": "Musician - Настрій",
