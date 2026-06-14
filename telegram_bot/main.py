@@ -20,8 +20,12 @@ async def on_startup(app):
 async def on_shutdown(app):
     await bot.delete_webhook()
 
+async def healthcheck(request):
+    return web.Response(text="OK")
+
 async def main():
     app = web.Application()
+    app.router.add_get("/", healthcheck)
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
     
