@@ -1,5 +1,9 @@
 from aiohttp import web
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
+import asyncio
+from aiogram import Dispatcher, Bot
+from handlers import music_router
+import os
 
 WEBHOOK_HOST = os.getenv("WEBHOOK_HOST") 
 WEBHOOK_PATH = f"/webhook/{os.getenv('BOT_TOKEN')}"
