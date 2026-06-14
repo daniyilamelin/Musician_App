@@ -75,23 +75,13 @@ def reccomendation(request):
     else:
         collection = db[os.getenv("MONGO_COLLECTION")]
         mod = request.GET.get('mood')
-        response = ai_client.models.generate_content(
-            model = "gemini-flash-latest",
-            contents = f"""
-            You are a nmusic analyst. User now have {mod} mood. 
-            Return ONLY a Python list of mood tags suitable for this feeling, no extra text.
-    Example: ["melancholic", "nostalgic", "dark", "peaceful"]
-    """
-        )
         lists_songs = []
 
-        moods = json.loads(response.text)
-        for mood in moods:
-            song = collection.find_one({
-                "user_id": request.user.telegram_id,
-                "mood": {"$regex": mood, "$options": "i"}})
-            if song:
-                lists_songs.append(song)
+        songs = collection.find({
+            "user_id": request.user.telegram_id,
+            "mood": {"$regex": mod, "$options": "i"}})
+        for song in songs:
+            lists_songs.append(song)
 
     context = {
         "title": "Musician - Настрій",
