@@ -7,5 +7,5 @@ async def find_id(telegram_id: int, user_id: int):
         UPDATE main_user 
         SET telegram_id = $1, is_verified = True
         WHERE id = $2;
-    """, telegram_id, user_id)
+    """, telegram_id, int(user_id))
     await conn.close()
