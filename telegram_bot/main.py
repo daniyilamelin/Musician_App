@@ -9,6 +9,8 @@ WEBHOOK_HOST = os.getenv("WEBHOOK_HOST")
 WEBHOOK_PATH = f"/webhook/{os.getenv('BOT_TOKEN')}"
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
+
+bot = Bot(token = os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
 
 async def on_startup(app):
