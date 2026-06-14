@@ -27,7 +27,7 @@ client = MongoClient(
     socketTimeoutMS=5000,
     maxPoolSize=1,
 )
-db = client["Musician"]
+db = client[os.getenv("MONGO_DATABASE")]
 ai_client = genai.Client(api_key= os.getenv("GEMINI_AI_KEY"))
 
 def index(request) -> HttpResponse:
@@ -39,7 +39,7 @@ def index(request) -> HttpResponse:
     return render(request, 'main/index.html', context)
 
 def playlist(request):
-    collection = db["musicCollections"]
+    collection = db[os.getenv("MONGO_COLLECTION")]
 
     if request.user.is_anonymous:
         documents = []
@@ -73,7 +73,7 @@ def reccomendation(request):
     if request.user.is_anonymous:
         lists_songs = []
     else:
-        collection = db["musicCollections"]
+        collection = db[os.getenv("MONGO_COLLECTION")]
         mod = request.GET.get('mood')
         response = ai_client.models.generate_content(
             model = "gemini-flash-latest",
