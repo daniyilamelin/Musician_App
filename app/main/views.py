@@ -99,6 +99,9 @@ class UserLoginView(LoginView):
     form_class = UserLoginForm
     success_url = reverse_lazy("main:profile")
 
+    def form_valid(self, form):
+        return HttpResponseRedirect(self.success_url)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Musician - Вхід"

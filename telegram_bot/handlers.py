@@ -32,7 +32,7 @@ async def start(message: Message):
                          "Меню бота із всім функціоналом /menu\n"
                          "Приємного використання!\n"
                          "Не забудьте відразу зареєструватися на сайті"
-                         "для доступу до всього функціоналу\n")
+                         " для доступу до всього функціоналу\n")
 
 @music_router.message(Command("menu"))
 async def show_menu(message: Message):
