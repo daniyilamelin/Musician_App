@@ -97,7 +97,7 @@ def reccomendation(request):
 class UserLoginView(LoginView):
     template_name = "main/login.html"
     form_class = UserLoginForm
-    success_url = reverse_lazy("main:index")
+    success_url = reverse_lazy("main:profile")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -108,7 +108,7 @@ class UserLoginView(LoginView):
 class UserRegistrationView(CreateView):
     template_name = "main/register.html"
     form_class = UserRegistrationForm
-    success_url = reverse_lazy("index")
+    success_url = reverse_lazy("profile")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
