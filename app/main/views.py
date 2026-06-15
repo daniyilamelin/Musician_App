@@ -97,7 +97,7 @@ def reccomendation(request):
 class UserLoginView(LoginView):
     template_name = "main/login.html"
     form_class = UserLoginForm
-    success_url = reverse_lazy("main:profile")
+    success_url = reverse_lazy("profile")
 
     def form_valid(self, form):
         return HttpResponseRedirect(self.success_url)
