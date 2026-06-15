@@ -51,7 +51,7 @@ async def add(message: Message, state: FSMContext):
 @music_router.message(Add_Music.song)
 async def add_song(message: Message, state: FSMContext):
     await state.update_data(song = message.text)
-    i = message.text.split(" - ")
+    i = message.text.split(" - ", 1)
     print(i[0])
     print(i[1])
 
