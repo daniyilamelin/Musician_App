@@ -97,10 +97,12 @@ def reccomendation(request):
 class UserLoginView(LoginView):
     template_name = "main/login.html"
     form_class = UserLoginForm
-    success_url = reverse_lazy("profile")
+
+    def get_success_url(self):
+        return reverse_lazy("profile")
 
     def form_valid(self, form):
-        return HttpResponseRedirect(self.success_url)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
