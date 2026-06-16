@@ -23,24 +23,24 @@
 
 ## Стек технологій
 - Веб-застосунок
-    1. **Backend:** Django, Python
-    2. **Databases:** Django ORM, MongoDB, PostgreSQL
-    3. **Cache:** Redis
-    4. **Frontend:** HTML, CSS, Chart.js
+    - **Backend:** Django, Python
+    - **Databases:** Django ORM, MongoDB, PostgreSQL
+    - **Cache:** Redis
+    - **Frontend:** HTML, CSS, Chart.js
 
 - Телеграм бот
-    1. **Struture:** Aiogram 3
-    2. **Databases:** Django ORM, MongoDB
-    3. **Cache:** Redis
-    4. **AI:** Google Gemini API
-    5. **Music API:** LastFM API
+    - **Struture:** Aiogram 3
+    - **Databases:** Django ORM, MongoDB
+    - **Cache:** Redis
+    - **AI:** Google Gemini API
+    - **Music API:** LastFM API
 
 - Хостинг
-    1. **Веб-застосунок:** Render + UptimeRobot
-    2. **Телеграм-бот:** Render + UptimeRobot
-    3. **MongoDB:** MongoDB Atlas
-    4. **Redis:** Upstash
-    5. **PostgreSQL:** Render
+    - **Веб-застосунок:** Render + UptimeRobot
+    - **Телеграм-бот:** Render + UptimeRobot
+    - **MongoDB:** MongoDB Atlas
+    - **Redis:** Upstash
+    - **PostgreSQL:** Render
 
 ## Функціонал
 1. Реєстрація та авторизація користувачів
