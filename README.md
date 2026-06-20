@@ -101,4 +101,4 @@ python manage.py migrate
         python main.py 
         ```
 ## Демо
-    https://musician-app-uv4h.onrender.com/
+[Переглянути демо](https://musician-app-uv4h.onrender.com/)
