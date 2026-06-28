@@ -42,6 +42,7 @@ def playlist(request):
     collection = db[os.getenv("MONGO_COLLECTION")]
 
     if request.user.is_anonymous:
+        print("User is not good")
         documents = []
         context = {
             "collection": documents,
@@ -73,7 +74,7 @@ def reccomendation(request):
     lists_songs = []
     if request.user.is_anonymous:
         lists_songs = []
-        print("User is not good")
+
     else:
         collection = db[os.getenv("MONGO_COLLECTION")]
         mod = request.GET.get('mood')
