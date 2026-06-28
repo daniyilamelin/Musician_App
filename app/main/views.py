@@ -79,9 +79,6 @@ def reccomendation(request):
         if not mod:
             lists_songs = []
         else:
-            print(type(request.user.telegram_id), request.user.telegram_id)
-            first_song = collection.find_one({})
-            print(type(first_song["user_id"]), first_song["user_id"])
             tid = request.user.telegram_id
             songs = collection.find({
                 "user_id": {"$in": [tid, str(tid), int(tid)]},
