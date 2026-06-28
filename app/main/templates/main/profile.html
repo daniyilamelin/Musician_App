@@ -176,7 +176,7 @@
       <span class="status-label">Статус акаунту</span>
       {% if request.user.telegram_id %}
         <span class="status-badge verified">✅ Верифікований</span>
-        <p>TG ID: {{ request.user.telegram_id }}</p>
+
       {% else %}
         <span class="status-badge unverified">⏳ Не верифікований</span>
       {% endif %}
