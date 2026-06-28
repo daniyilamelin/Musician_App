@@ -79,8 +79,9 @@ def reccomendation(request):
         if not mod:
             lists_songs = []
         else:
+            tid = request.user.telegram_id
             songs = collection.find({
-                "user_id": request.user.telegram_id,
+                "user_id": {"$in": [tid, str(tid), int(tid)]},
                 "mood": {"$regex": mod, "$options": "i"}})
             for song in songs:
                 lists_songs.append(song)
