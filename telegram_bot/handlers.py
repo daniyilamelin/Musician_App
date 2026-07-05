@@ -60,7 +60,7 @@ async def add_song(message: Message, state: FSMContext):
     song = network.get_track(i[0], i[1])
     song_tag = song.get_top_tags(limit=5)
     if len(song_tag) == 0:
-        await message.answer(f"Не вдалося знайти пінсю: {i[1}. Сробуйте написати по іншому або завантажити іншу пісню")
+        await message.answer(f"Не вдалося знайти пінсю: {i[1]}. Сробуйте написати по іншому або завантажити іншу пісню")
     else:
         tags = []
         for tag in artist_tag:
