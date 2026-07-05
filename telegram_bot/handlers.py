@@ -59,46 +59,50 @@ async def add_song(message: Message, state: FSMContext):
     artist_tag = artist.get_top_tags(limit=5)
     song = network.get_track(i[0], i[1])
     song_tag = song.get_top_tags(limit=5)
-    tags = []
-    for tag in artist_tag:
-        tags.append(tag.item.get_name())
-    for tag in song_tag:
-        tags.append(tag.item.get_name())
-    genres = song_tag[0].item.name
-    response = ai_client.models.generate_content(
-        model = "gemini-flash-latest",
-        contents = f"""
-        You are a music analyst. Analyze the following song and return ONLY a JSON object, no extra text.
-        Song: {song}
-        Artist: {artist}
-        Genre: {genres}
-        Tags: {tags}
+    if len(song_tag) == 0:
+        await message.answer(f"Не вдалося знайти пінсю: {i[1}. Сробуйте написати по іншому або завантажити іншу пісню")
+    else:
+        tags = []
+        for tag in artist_tag:
+            tags.append(tag.item.get_name())
+        for tag in song_tag:
+            tags.append(tag.item.get_name())
+        genres = song_tag[0].item.name
+    
+        response = ai_client.models.generate_content(
+            model = "gemini-flash-latest",
+            contents = f"""
+            You are a music analyst. Analyze the following song and return ONLY a JSON object, no extra text.
+            Song: {song}
+            Artist: {artist}
+            Genre: {genres}
+            Tags: {tags}
         
-        Return this exact JSON structure:
-        {{
-            "mood": "Return ONLY one of these exact mood values:
-happy, sad, energetic, calm, melancholic, nostalgic, focused, romantic, angry, chill",
-            "energy": "one single word, lowercase (e.g. low, high, ,medium)",
-            "mood_description": "",
-            "recommended_for": []
-        }}
-        """
-    )
-    data = json.loads(response.text)
-    documents = {
-        "user_id": message.from_user.id,
-        "song": i[1],
-        "artist": i[0],
-        "tags": list(set(tags)),
-        "genre": genres,
-        **data
-    }
+            Return this exact JSON structure:
+            {{
+                "mood": "Return ONLY one of these exact mood values:
+                happy, sad, energetic, calm, melancholic, nostalgic, focused, romantic, angry, chill",
+                "energy": "one single word, lowercase (e.g. low, high, ,medium)",
+                "mood_description": "",
+                "recommended_for": []
+            }}
+            """
+        )
+        data = json.loads(response.text)
+        documents = {
+            "user_id": message.from_user.id,
+            "song": i[1],
+            "artist": i[0],
+            "tags": list(set(tags)),
+            "genre": genres,
+            **data
+        }
 
 
-    print(documents)
-    await collection.insert_one(documents)
-    await message.answer(f"Добавлено пісню: {message.text}")
-    await state.clear()
+        print(documents)
+        await collection.insert_one(documents)
+        await message.answer(f"Добавлено пісню: {message.text}")
+        await state.clear()
 
 
 @music_router.message(F.text == "Показати плейлист")
