@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
-import dj_database_url
+
 
 from pathlib import Path
 from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,9 +78,17 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
+tmpostgres = urlparse(os.getenv("POSTGRES_URL"))
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('POSTGRES_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpostgres.path.replace('/', ''),
+        'USER': tmpostgres.username,
+        'PASSWORD': tmpostgres.password,
+        'HOST': tmpostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpostgres.query)),
+    }
 }
 
 
